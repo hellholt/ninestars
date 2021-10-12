@@ -1,0 +1,14 @@
+spec:
+  clusterFQDNs:
+    private: 'karhold.hellholt.net'
+    personal: 'karhold.bitterbridge.net'
+  domains:
+    private: 'hellholt.net'
+    personal: 'bitterbridge.net'
+  destination:
+    clusterName: 'karhold'
+    server: 'https://kubernetes.default.svc'
+  source:
+    repoURL: "https://github.com/hellholt/karhold.git"
+    repoPath: 'argocd'
+    targetRevision: 'HEAD'

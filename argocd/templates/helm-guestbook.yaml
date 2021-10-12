@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-guestbook
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: helm-guestbook
+    server: {{ .Values.spec.destination.server }}
+  project: default
+  source:
+    path: {{ .Values.spec.source.repoPath }}/helm-guestbook
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision }}
+    helm:
+      values: |
+        ingress:
+          enabled: yes
+          annotations:
+            cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+          path: '/'
+          hosts:
+            - 'guestbook.{{ .Values.spec.clusterFQDNs.private }}'
+            - 'guestbook.{{ .Values.spec.clusterFQDNs.personal }}'
+          tls:
+            - hosts:
+                - "guestbook.{{ .Values.spec.clusterFQDNs.private }}"
+                - "*.guestbook.{{ .Values.spec.clusterFQDNs.private }}"
+              secretName: 'guestbook.{{ .Values.spec.clusterFQDNs.private }}-secret'
+  syncPolicy:
+    automated:
+      prune: yes
+      selfHeal: yes
+      allowEmpty: yes
+    syncOptions:
+      - Validate=false
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
