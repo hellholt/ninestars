@@ -18,7 +18,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: http
+                name: guestbook-svc
                 port:
                   number: {{ $.Values.service.port }}
   {{- end }}
